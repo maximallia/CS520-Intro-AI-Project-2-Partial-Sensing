@@ -154,7 +154,8 @@ public class Agent1{
         if(curr_row >= maze.maze.length || curr_col >= maze.maze[0].length) return false;
 
         //int[] cords = {curr_row, curr_col};
-        if( maze.maze[curr_row][curr_col] == 'X'){
+        // D = deadend, X= block
+        if( maze.maze[curr_row][curr_col] == 'X' || maze.maze[curr_row][curr_col] == 'D'){
             //hit block before
             int[] cords = new int[]{curr_row, curr_col};
             //System.out.println("cords: "+ cords[0] +" "+ cords[1]);
@@ -317,6 +318,8 @@ public class Agent1{
 
                     System.out.println("dead end block cords: "+ cords[0] +" "+ cords[1]);
 
+                    maze.maze[cords[0]][cords[1]] = 'D';
+
                     block[block_idx][0] = cords[0];
                     block[block_idx][1] = cords[1];
                     block_idx++;
@@ -338,6 +341,7 @@ public class Agent1{
                     grids_traveled++;
 
                     dead_end = 0;
+                    
 
                     //curr_grid = curr_grid.get_parent();
 
