@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.*;
+//import org.javatuples.Pair;
 
 
 
@@ -19,7 +20,7 @@ public class Agent1{
 
     MazeGrid start_grid = new MazeGrid(0, 0, 0, null);
     //MazeGrid goal_grid = new MazeGrid(0, 0, )
-    MazeGrid curr_grid = start_grid;
+    MazeGrid curr_grid = new MazeGrid(0, 0, 0, null);
 
     int row_dim;
     int col_dim;
@@ -59,6 +60,8 @@ public class Agent1{
         // continuously add path to open
         while(true){
 
+            int temp_idx = agent1.block_idx;
+
             System.out.println("main");
 
             System.out.println("curr_grid1: "+ agent1.curr_grid.get_row()+ " "+ agent1.curr_grid.get_col());
@@ -96,12 +99,14 @@ public class Agent1{
                 //break;
                 agent1.curr_grid = agent1.open.lastElement().get_parent();
             }
-            counter++;
-
-            /*if(counter == 1000){
+            if(temp_idx == agent1.block_idx){
+                counter++;
+                
+            }
+            if(counter == 100){
                 System.out.println("main counter ended");
                 break;
-            }*/
+            }
             if(agent1.curr_grid.get_row() == g_row && agent1.curr_grid.get_col()== g_col) break;
 
         }
@@ -178,6 +183,12 @@ public class Agent1{
             return false;
         }
 
+        if(curr_grid.get_parent() != null && dead_end != 1){
+            if(curr_grid.get_parent().get_col()== curr_col && curr_grid.get_parent().get_row() == curr_row){
+            return false;
+           }
+        }
+
         return true;
     }
 
@@ -194,7 +205,7 @@ public class Agent1{
 
         possible_directions = 0;
 
-        if(move_valid(maze,curr_row, right, path_idx)){
+        if(move_valid(maze, curr_row, right, path_idx)){
             directions.add(new MazeGrid(curr_row, right, curr_grid.get_g_cost()+1, curr_grid));
             possible_directions++;
         }
@@ -297,12 +308,14 @@ public class Agent1{
                     return path;
                 }
                 // for dead end
-                else if(possible_directions == 1  && dead_end != 2) {
+                
+                else if((possible_directions == 1  && dead_end != 2) && temp_grid != null) {
+                    //if(curr_grid.get_g_cost()+1 < temp_grid.get_g_cost()){
                     int[] cords = new int[2];
                     cords[0] = curr_row;
                     cords[1] = curr_col ;
 
-                    System.out.println("hit block cords: "+ cords[0] +" "+ cords[1]);
+                    System.out.println("dead end block cords: "+ cords[0] +" "+ cords[1]);
 
                     block[block_idx][0] = cords[0];
                     block[block_idx][1] = cords[1];
@@ -315,22 +328,32 @@ public class Agent1{
                     path.add(curr_grid);
                     grids_popped++;
 
+
+                    fringe.add(temp_grid);
+                    path.add(curr_grid);
+
+                    System.out.println("temp_grid cords: "+ temp_row + ", " + temp_col);
+
+                    //curr_grid = temp_grid;
+                    grids_traveled++;
+
                     dead_end = 0;
 
                     //curr_grid = curr_grid.get_parent();
 
-                    //return path;
+                    break;
+                    //}
                 }
 
                 //already traveled to the grid in current iteration
                 //if((path_cords[i][0] == temp_row && path_cords[i][1] == temp_col) || path_cords== null) continue;
-                MazeGrid parent = temp_grid.get_parent();
+                //MazeGrid parent = temp_grid.get_parent();
                 //if(temp_grid.get_row() == parent.get_row() && temp_grid.get_col() == parent.get_col()) continue;
             
                 //System.out.println("path_cords " + i + ": "+ path_cords[i][0] + " "+ path_cords[i][1]);
 
                 if(temp_grid != null){
-                    
+                    //if(curr_grid.get_g_cost()+1 < temp_grid.get_g_cost()){
                     path_cords[i][0] = curr_row;
                     path_cords[i][1] = curr_col;
 
@@ -341,14 +364,16 @@ public class Agent1{
 
                     System.out.println("temp_grid cords: "+ temp_row + ", " + temp_col);
 
-                    curr_grid = temp_grid;
+                    //curr_grid = temp_grid;
                     grids_traveled++;
+                    break;
+                    //}
                 }
 
-                break;
+                //break;
 
             }
-            if(stopper >10 ) break;
+            if(stopper ==4 ) break;
         }
         return path;
     
