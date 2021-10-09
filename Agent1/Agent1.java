@@ -1,4 +1,3 @@
-
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Vector;
@@ -99,10 +98,10 @@ public class Agent1{
             }
             counter++;
 
-            if(counter == 1000){
+            /*if(counter == 1000){
                 System.out.println("main counter ended");
                 break;
-            }
+            }*/
             if(agent1.curr_grid.get_row() == g_row && agent1.curr_grid.get_col()== g_col) break;
 
         }
@@ -116,6 +115,9 @@ public class Agent1{
         char[][] new_maze = agent1.input_path(maze);
 
         maze.print_maze(new_maze);
+
+        System.out.println("grids traveled: "+ agent1.grids_traveled);
+        System.out.println("grids processed: "+ agent1.grids_popped);
 
     }
 
@@ -311,6 +313,7 @@ public class Agent1{
                     i++;
                 
                     path.add(curr_grid);
+                    grids_popped++;
 
                     dead_end = 0;
 
