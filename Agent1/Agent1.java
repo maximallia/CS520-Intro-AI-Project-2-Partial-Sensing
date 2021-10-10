@@ -57,14 +57,14 @@ public class Agent1{
 
         int counter = -1;
 
+        System.out.println("Begin Maze run...");
+
         // continuously add path to open
         while(true){
 
             int temp_idx = agent1.block_idx;
 
-            System.out.println("main");
-
-            System.out.println("curr_grid1: "+ agent1.curr_grid.get_row()+ " "+ agent1.curr_grid.get_col());
+            //System.out.println("curr_grid1: "+ agent1.curr_grid.get_row()+ " "+ agent1.curr_grid.get_col());
 
             LinkedList<MazeGrid> path = agent1.forward_astar( g_row, g_col, maze);
 
@@ -92,7 +92,7 @@ public class Agent1{
             }
             
             if(agent1.curr_grid != null){
-                System.out.println("curr_grid2: "+ agent1.curr_grid.get_row()+ " "+ agent1.curr_grid.get_col());
+                //System.out.println("curr_grid2: "+ agent1.curr_grid.get_row()+ " "+ agent1.curr_grid.get_col());
             }
             else{
                 //System.out.println("Maze is unsolvable.");
@@ -104,7 +104,7 @@ public class Agent1{
                 
             }
             if(counter == 100){
-                System.out.println("main counter ended");
+                System.out.println("Goal unreachable");
                 break;
             }
             if(agent1.curr_grid.get_row() == g_row && agent1.curr_grid.get_col()== g_col) break;
@@ -296,7 +296,7 @@ public class Agent1{
                     cords[0] = temp_row;
                     cords[1] = temp_col ;
                     
-                    System.out.println("hit block cords: "+ cords[0] +" "+ cords[1]);
+                    //System.out.println("hit block cords: "+ cords[0] +" "+ cords[1]);
 
                     block[block_idx][0] = cords[0];
                     block[block_idx][1] = cords[1];
@@ -316,7 +316,7 @@ public class Agent1{
                     cords[0] = curr_row;
                     cords[1] = curr_col ;
 
-                    System.out.println("dead end block cords: "+ cords[0] +" "+ cords[1]);
+                    //System.out.println("dead end block cords: "+ cords[0] +" "+ cords[1]);
 
                     maze.maze[cords[0]][cords[1]] = 'D';
 
@@ -335,7 +335,7 @@ public class Agent1{
                     fringe.add(temp_grid);
                     path.add(curr_grid);
 
-                    System.out.println("temp_grid cords: "+ temp_row + ", " + temp_col);
+                    //System.out.println("temp_grid cords: "+ temp_row + ", " + temp_col);
 
                     //curr_grid = temp_grid;
                     grids_traveled++;
@@ -366,7 +366,7 @@ public class Agent1{
                     fringe.add(temp_grid);
                     path.add(curr_grid);
 
-                    System.out.println("temp_grid cords: "+ temp_row + ", " + temp_col);
+                    //System.out.println("temp_grid cords: "+ temp_row + ", " + temp_col);
 
                     //curr_grid = temp_grid;
                     grids_traveled++;
