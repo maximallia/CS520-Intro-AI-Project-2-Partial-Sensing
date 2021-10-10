@@ -252,7 +252,8 @@ public class Agent1{
             curr_grid = fringe.poll();
 
             if(curr_grid == null){
-                System.out.println("unsolvable");
+                //System.out.println("unsolvable");
+                curr_grid = open.lastElement();
                 return path;
             }
 
