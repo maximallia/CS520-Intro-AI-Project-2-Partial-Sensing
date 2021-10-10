@@ -14,8 +14,8 @@ import java.io.*;
 
 public class Agent1{
     
-    public PriorityQueue<MazeGrid> close = new PriorityQueue<MazeGrid>();
-    public Vector<MazeGrid> open = new Vector<MazeGrid>();
+    public PriorityQueue<MazeGrid> open = new PriorityQueue<MazeGrid>();
+    public Vector<MazeGrid> closed = new Vector<MazeGrid>();
     public int[][] block = new int[1100][2];
 
     MazeGrid start_grid = new MazeGrid(0, 0, 0, null);
@@ -80,15 +80,20 @@ public class Agent1{
                     continue;
                 }
 
-                /*if(agent1.open.contains(temp_grid)){
-                    int idx = agent1.open.indexOf(temp_grid);
-
-                    if(agent1.open.get(idx).get_g_cost() < temp_grid.get_g_cost()){
-                        agent1.open.set(idx, temp_grid);
+                Iterator<MazeGrid> iter = agent1.open.iterator();
+                int switched = 0;
+                while(iter.hasNext()){
+                    MazeGrid next_grid = iter.next();
+                    if(next_grid.equals(temp_grid)){
+                        switched = 1;
+                        if(next_grid.get_g_cost()> temp_grid.get_g_cost()){
+                            agent1.open.remove(next_grid);
+                            agent1.open.add(temp_grid);
+                        }
                     }
-                }*/
-                //else agent1.open.add(temp_grid);
-                agent1.open.add(temp_grid);
+                }
+
+                if(switched == 0) agent1.open.add(temp_grid);
             }
             
             if(agent1.curr_grid != null){
@@ -97,7 +102,7 @@ public class Agent1{
             else{
                 //System.out.println("Maze is unsolvable.");
                 //break;
-                agent1.curr_grid = agent1.open.lastElement().get_parent();
+                //agent1.curr_grid = agent1.open.lastElement().get_parent();
             }
             if(temp_idx == agent1.block_idx){
                 counter++;
@@ -124,6 +129,27 @@ public class Agent1{
         System.out.println("grids traveled: "+ agent1.grids_traveled);
         System.out.println("grids processed: "+ agent1.grids_popped);
 
+        int best_grids = agent1.best_path();
+
+        System.out.println("optimal grids traveled: "+ best_grids);
+
+    }
+
+
+    public int best_path(){
+
+        while(open.size()>0){
+            MazeGrid temp = open.poll();
+
+            if(temp.get_col() == col_dim-1 && temp.get_row() == row_dim-1){
+                closed.add(temp);
+                break;
+            }
+
+            closed.add(temp);
+        }
+
+        return closed.size();
     }
 
     public char[][] input_path(Maze maze){
@@ -253,7 +279,7 @@ public class Agent1{
 
             if(curr_grid == null){
                 //System.out.println("unsolvable");
-                curr_grid = open.lastElement();
+                curr_grid = path.getLast();
                 return path;
             }
 
@@ -378,7 +404,7 @@ public class Agent1{
                 //break;
 
             }
-            if(stopper ==4 ) break;
+            //if(stopper ==4 ) break;
         }
         return path;
     
