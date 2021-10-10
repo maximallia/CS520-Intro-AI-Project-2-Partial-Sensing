@@ -36,6 +36,8 @@ public class Agent1{
 
     int failed = 0;
 
+    int block_hit = 0;
+
     MazeGrid last_grid = null;
 
     public static void main(String[] args){
@@ -61,9 +63,12 @@ public class Agent1{
 
         int counter = -1;
 
+        
+
         System.out.println("Begin Maze run...");
 
         // continuously add path to open
+        long startTime = System.nanoTime();
         while(true){
 
             int temp_idx = agent1.block_idx;
@@ -140,6 +145,10 @@ public class Agent1{
         //}
         System.out.println(" ");
 
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
+
         char[][] new_maze = agent1.input_path(maze);
         //char[][] new_maze2 = agent1.input_path(maze);
 
@@ -147,6 +156,8 @@ public class Agent1{
 
         System.out.println("grids traveled: "+ agent1.grids_traveled);
         System.out.println("grids processed: "+ agent1.grids_popped);
+        System.out.println("runtime ms: "+ duration);
+        System.out.println("blocks hit: "+ agent1.block_hit);
 
         //double best_grids = agent1.best_path(new_maze2, row_dim, col_dim)
 
@@ -461,14 +472,16 @@ public class Agent1{
                 int temp_col = temp_grid.get_col();
 
                 //hit a new block
-                if( (maze.maze[temp_row][temp_col] == 'X' )
-                ){
+                if( (maze.maze[temp_row][temp_col] == 'X' )){
                     //System.out.println("store into block");
                     int[] cords = new int[2];
                     cords[0] = temp_row;
                     cords[1] = temp_col ;
                     
                     //System.out.println("hit block cords: "+ cords[0] +" "+ cords[1]);
+                    //record hit block
+
+                    block_hit++;
 
                     block[block_idx][0] = cords[0];
                     block[block_idx][1] = cords[1];
