@@ -34,6 +34,10 @@ public class Agent1{
 
     int block_idx = 0;
 
+    int failed = 0;
+
+    MazeGrid last_grid = null;
+
     public static void main(String[] args){
 
         int row_dim = Integer.parseInt(args[0]);
@@ -80,18 +84,28 @@ public class Agent1{
                     continue;
                 }
 
+
                 Iterator<MazeGrid> iter = agent1.open.iterator();
+                //PriorityQueue<MazeGrid> temp_open = agent1.open;
+
                 int switched = 0;
+                MazeGrid old_grid = null;
                 while(iter.hasNext()){
-                    MazeGrid next_grid = iter.next();
-                    if(next_grid.equals(temp_grid)){
+                    old_grid = iter.next();
+                    if(old_grid.equals(temp_grid)){
                         switched = 1;
-                        if(next_grid.get_g_cost()> temp_grid.get_g_cost()){
-                            agent1.open.remove(next_grid);
-                            agent1.open.add(temp_grid);
-                        }
+                        break;
                     }
                 }
+                if(switched == 1){
+                    if(old_grid.get_f_cost() < temp_grid.get_f_cost()){
+                        temp_grid.set_parent(old_grid.get_parent());
+
+                        agent1.open.remove(old_grid);
+                        agent1.open.add(temp_grid);
+                    }
+                }
+                
 
                 if(switched == 0) agent1.open.add(temp_grid);
             }
@@ -110,9 +124,13 @@ public class Agent1{
             }
             if(counter == 100){
                 System.out.println("Goal unreachable");
+                agent1.failed = 1;
                 break;
             }
-            if(agent1.curr_grid.get_row() == g_row && agent1.curr_grid.get_col()== g_col) break;
+            if(agent1.curr_grid.get_row() == g_row && agent1.curr_grid.get_col()== g_col){
+                agent1.last_grid = agent1.curr_grid;
+                break;
+            }
 
         }
 
@@ -123,33 +141,160 @@ public class Agent1{
         System.out.println(" ");
 
         char[][] new_maze = agent1.input_path(maze);
+        //char[][] new_maze2 = agent1.input_path(maze);
 
         maze.print_maze(new_maze);
 
         System.out.println("grids traveled: "+ agent1.grids_traveled);
         System.out.println("grids processed: "+ agent1.grids_popped);
 
-        int best_grids = agent1.best_path();
+        //double best_grids = agent1.best_path(new_maze2, row_dim, col_dim)
 
-        System.out.println("optimal grids traveled: "+ best_grids);
+        if(agent1.failed==0){
+            int best_grids = agent1.best_path2();
+
+            //System.out.println("optimal grids traveled 1: "+ );
+            System.out.println("optimal grids traveled: "+ best_grids);
+        }
 
     }
 
+    public int best_path2(){
 
-    public int best_path(){
+        MazeGrid temp = last_grid.get_parent();
 
-        while(open.size()>0){
-            MazeGrid temp = open.poll();
+        //System.out.println(temp.get_row() +", "+ temp.get_col());
+        
+        while (temp != null){
 
-            if(temp.get_col() == col_dim-1 && temp.get_row() == row_dim-1){
-                closed.add(temp);
-                break;
-            }
+            //MazeGrid temp = open.poll();
 
             closed.add(temp);
+
+            if(temp.get_col()== 0 && temp.get_row()== 0){
+                return closed.size();
+            }
+
+            temp = temp.get_parent();
+
+            //System.out.println(temp.get_row() +", "+ temp.get_col());
         }
 
-        return closed.size();
+        return -9999;
+    }
+
+
+    public double best_path(char[][] new_maze, int row_dim, int col_dim){
+
+        for(int i=0; i<row_dim; i++){
+            for(int j=0; j<col_dim; j++){
+                System.out.print(new_maze[i][j]+" ");
+            }
+            System.out.println(" ");
+        }
+
+        int closed_size = 0;
+
+        int c_row=0;
+        int c_col = 0;
+
+        int g = 1;
+
+        PriorityQueue<MazeGrid> t_fringe = new PriorityQueue<MazeGrid>();
+
+        t_fringe.add(start_grid);
+
+        MazeGrid temp = null;
+
+        int moved_before = 0;
+
+        while( t_fringe != null){
+
+            int up = c_row-1;
+            int down = c_row+1;
+            int left = c_col-1;
+            int right = c_col+1;
+
+            //System.out.println(up+ ", " + down+ "," + left+ ", "+ right);
+
+            g++;
+
+            temp = t_fringe.poll();
+            //System.out.println(temp.get_row()+ ","+ temp.get_col());
+
+            //closed.add(temp);
+
+            if(up >= 0 && up < row_dim){
+                if(new_maze[up][c_col] == 'O' || new_maze[up][c_col] == 'G'){
+                    //System.out.println("found O");
+                    t_fringe.add(new MazeGrid(up, c_col, g, temp));
+
+                    //if(new_maze[up][c_col] == 'O') new_maze[up][c_col] = '_';
+
+                    c_row = up;
+
+                }
+
+                //if(moved_before==0) moved_before = 1;
+
+            }
+            /*if(new_maze[c_row][c_col] == 'G'){
+                temp = t_fringe.poll();
+                //closed.add(temp);
+                g++;
+                return g;
+            }*/
+            if(down < row_dim && down >= 0){
+                if(new_maze[down][c_col] == 'O'|| new_maze[down][c_col] == 'G'){
+                    //System.out.println("found O");
+                    t_fringe.add(new MazeGrid(down, c_col, g, temp));
+                    c_row = down;
+
+                    //if(new_maze[down][c_col] == 'O') new_maze[down][c_col] = '_';
+                }
+            }
+            /*if(new_maze[c_row][c_col] == 'G'){
+                temp = t_fringe.poll();
+                //closed.add(temp);
+                g++;
+                return g;
+            }*/
+            if(left < col_dim && left >= 0){
+                if(new_maze[c_row][left] == 'O'|| new_maze[c_row][left] == 'G'){
+                    //System.out.println("found O");
+                    t_fringe.add(new MazeGrid(c_row, left, g, temp));
+                    c_col = left;
+
+                    //if(new_maze[c_row][left] == 'O') new_maze[c_row][left] = '_';
+                    
+                }
+            }
+            /*if(new_maze[c_row][c_col] == 'G'){
+                temp = t_fringe.poll();
+                //closed.add(temp);
+                g++;
+                return g;
+            }*/
+            if(right < col_dim && right >= 0){
+                if(new_maze[c_row][right] == 'O'|| new_maze[c_row][right] == 'G'){
+                    //System.out.println("found O");
+                    t_fringe.add(new MazeGrid(c_row, right, g, temp));
+                    c_col = right;
+
+                    //if(new_maze[c_row][right] == 'O') new_maze[c_row][right] = '_';
+                }
+            }
+
+            if(new_maze[temp.get_row()][temp.get_col()] == 'G'){
+                temp = t_fringe.poll();
+                //closed.add(temp);
+                temp.set_g_cost(temp.get_g_cost()+1);
+                return temp.get_g_cost();
+            }
+
+        }
+
+        return g;
     }
 
     public char[][] input_path(Maze maze){
@@ -337,7 +482,7 @@ public class Agent1{
                 }
                 // for dead end
                 
-                else if((possible_directions == 1  && dead_end != 2) && temp_grid != null) {
+                else if((possible_directions == 0)) {
                     //if(curr_grid.get_g_cost()+1 < temp_grid.get_g_cost()){
                     int[] cords = new int[2];
                     cords[0] = curr_row;
@@ -364,7 +509,7 @@ public class Agent1{
 
                     //System.out.println("temp_grid cords: "+ temp_row + ", " + temp_col);
 
-                    //curr_grid = temp_grid;
+                    curr_grid = curr_grid.get_parent();
                     grids_traveled++;
 
                     dead_end = 0;
