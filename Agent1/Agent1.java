@@ -122,7 +122,7 @@ public class Agent1{
             }
             
             if(agent1.curr_grid != null){
-                System.out.println("curr_grid2: "+ agent1.curr_grid.get_row()+ " "+ agent1.curr_grid.get_col());
+                //System.out.println("curr_grid2: "+ agent1.curr_grid.get_row()+ " "+ agent1.curr_grid.get_col());
             }
             else{
                 //System.out.println("Maze is unsolvable.");
@@ -133,7 +133,7 @@ public class Agent1{
                 counter++;
                 
             }
-            if(counter == 10 || agent1.curr_grid == null){
+            if(counter == 100 || agent1.curr_grid == null){
                 System.out.println("Goal unreachable");
                 agent1.failed = 1;
                 break;
@@ -365,7 +365,7 @@ public class Agent1{
             int curr_col = curr_grid.get_col();
             grids_popped++;
 
-            System.out.println("fringe: "+ curr_row+ " "+ curr_col);
+            //System.out.println("fringe: "+ curr_row+ " "+ curr_col);
 
             if(curr_row == g_row && curr_col == g_col){
                 //path.add(curr_grid);
@@ -376,7 +376,7 @@ public class Agent1{
             //should be order by f=g+h due to mazegrid's comparable
             LinkedList<MazeGrid> directions = possible_paths(curr_row, curr_col, before_change, path_cords);
 
-            System.out.println(possible_directions);
+            //System.out.println(possible_directions);
 
             if(possible_directions == 0 && walls == 3){
                 curr_grid = curr_grid.get_parent();
@@ -384,7 +384,7 @@ public class Agent1{
                 maze.maze[curr_row][curr_col] = 'D';
                 before_change[curr_row][curr_col] = 'D';
 
-                System.out.println("curr_grid cords at dead end: "+ curr_row +" "+ curr_col);
+                //System.out.println("curr_grid cords at dead end: "+ curr_row +" "+ curr_col);
 
                 block[block_idx][0] = curr_row;
                 block[block_idx][1] = curr_col;
@@ -409,7 +409,7 @@ public class Agent1{
                 maze.maze[cords[0]][cords[1]] = 'D';
                 before_change[cords[0]][cords[1]] = 'D';
 
-                System.out.println("curr_grid cords at dead end: "+ curr_row +" "+ curr_col);
+                //System.out.println("curr_grid cords at dead end: "+ curr_row +" "+ curr_col);
 
                 block[block_idx][0] = cords[0];
                 block[block_idx][1] = cords[1];
