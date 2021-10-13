@@ -43,19 +43,20 @@ public class Agent1{
 
     public static void main(String[] args){
 
-        //int row_dim = Integer.parseInt(args[0]);
-        //int col_dim = Integer.parseInt(args[1]);
+        int row_dim = Integer.parseInt(args[0]);
+        int col_dim = Integer.parseInt(args[1]);
 
-        int row_dim = 101;
-        int col_dim = 101;
+        //int row_dim = 101;
+        //int col_dim = 101;
 
         int g_row = row_dim-1;
         int g_col = col_dim-1;
 
-        //double p = Double.parseDouble(args[2]);
-        double p = 33;
+        double p = Double.parseDouble(args[2]);
+        //double p = 33;
         //Maze maze;
 
+        long startTime = System.nanoTime();
         boolean restart = true;
         while(restart == true){
             Maze maze = new Maze(row_dim, col_dim, p);
@@ -69,10 +70,10 @@ public class Agent1{
 
             int counter = -1;
 
-            System.out.println("Begin Maze run...");
+            //System.out.println("Begin Maze run...");
 
             // continuously add path to open
-            long startTime = System.nanoTime();
+            //startTime = System.nanoTime();
             while(true){
 
                 //MazeGrid parent_grid = agent1.curr_grid.;
@@ -139,7 +140,7 @@ public class Agent1{
                     
                 }
                 if(counter == 500 || agent1.curr_grid == null){
-                    System.out.println("Goal unreachable");
+                    //System.out.println("Goal unreachable");
                     agent1.failed = 1;
                     break;
                 }
