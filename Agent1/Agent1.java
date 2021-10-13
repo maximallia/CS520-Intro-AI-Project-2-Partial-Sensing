@@ -54,133 +54,146 @@ public class Agent1{
 
         double p = Double.parseDouble(args[2]);
         //double p = 33;
+
+        int iterations = Integer.parseInt(args[3]);
+
         //Maze maze;
 
-        long startTime = System.nanoTime();
+        //long startTime = System.nanoTime();
         boolean restart = true;
-        while(restart == true){
-            Maze maze = new Maze(row_dim, col_dim, p);
+        int times = 1;
+        while(times <= iterations){
 
-            //Agent1 agent;
-            
-            //System.out.println(maze);
-            //maze.print_maze(maze.maze);
+            restart = true;
 
-            Agent1 agent1 = new Agent1();
+            while(restart == true){
+                Maze maze = new Maze(row_dim, col_dim, p);
 
-            int counter = -1;
+                long startTime = System.nanoTime();
 
-            //System.out.println("Begin Maze run...");
-
-            // continuously add path to open
-            //startTime = System.nanoTime();
-            while(true){
-
-                //MazeGrid parent_grid = agent1.curr_grid.;
-
-                int temp_idx = agent1.block_idx;
-
-                //System.out.println("curr_grid1: "+ agent1.curr_grid.get_row()+ " "+ agent1.curr_grid.get_col());
-
-                if(maze.maze[agent1.curr_grid.get_row()][agent1.curr_grid.get_col()] == 'D'){
-
-                    if(agent1.curr_grid.get_parent()!= null) agent1.curr_grid = agent1.curr_grid.get_parent();
-                }
-
-                LinkedList<MazeGrid> path = agent1.forward_astar( g_row, g_col, maze);
-
-                Iterator<MazeGrid> value = path.iterator();
-
-                //int i = 0;
-                while(value.hasNext()){
-                    MazeGrid temp_grid = value.next();
-
-                    // same grid added, add new one
-                    if(agent1.open == null){
-                        agent1.open.add(temp_grid);
-                        continue;
-                    }
-
-
-                    Iterator<MazeGrid> iter = agent1.open.iterator();
-                    //PriorityQueue<MazeGrid> temp_open = agent1.open;
-
-                    int switched = 0;
-                    MazeGrid old_grid = null;
-                    while(iter.hasNext()){
-                        old_grid = iter.next();
-                        if(old_grid.equals(temp_grid)){
-                            switched = 1;
-                            break;
-                        }
-                    }
-                    if(switched == 1){
-                        if(old_grid.get_f_cost() < temp_grid.get_f_cost()){
-                            temp_grid.set_parent(old_grid.get_parent());
-
-                            agent1.open.remove(old_grid);
-                            agent1.open.add(temp_grid);
-                        }
-                    }
-                    
-
-                    if(switched == 0) agent1.open.add(temp_grid);
-                }
+                //Agent1 agent;
                 
-                if(agent1.curr_grid != null){
-                    //System.out.println("curr_grid2: "+ agent1.curr_grid.get_row()+ " "+ agent1.curr_grid.get_col());
-                }
-                else{
-                    //System.out.println("Maze is unsolvable.");
-                    //break;
-                    //agent1.curr_grid = agent1.open.lastElement().get_parent();
-                }
-                if(temp_idx == agent1.block_idx){
-                    counter++;
+                //System.out.println(maze);
+                //maze.print_maze(maze.maze);
+
+                Agent1 agent1 = new Agent1();
+
+                int counter = -1;
+
+                //System.out.println("Begin Maze run...");
+
+                // continuously add path to open
+                //startTime = System.nanoTime();
+                while(true){
+
+                    //MazeGrid parent_grid = agent1.curr_grid.;
+
+                    int temp_idx = agent1.block_idx;
+
+                    //System.out.println("curr_grid1: "+ agent1.curr_grid.get_row()+ " "+ agent1.curr_grid.get_col());
+
+                    if(maze.maze[agent1.curr_grid.get_row()][agent1.curr_grid.get_col()] == 'D'){
+
+                        if(agent1.curr_grid.get_parent()!= null) agent1.curr_grid = agent1.curr_grid.get_parent();
+                    }
+
+                    LinkedList<MazeGrid> path = agent1.forward_astar( g_row, g_col, maze);
+
+                    Iterator<MazeGrid> value = path.iterator();
+
+                    //int i = 0;
+                    while(value.hasNext()){
+                        MazeGrid temp_grid = value.next();
+
+                        // same grid added, add new one
+                        if(agent1.open == null){
+                            agent1.open.add(temp_grid);
+                            continue;
+                        }
+
+
+                        Iterator<MazeGrid> iter = agent1.open.iterator();
+                        //PriorityQueue<MazeGrid> temp_open = agent1.open;
+
+                        int switched = 0;
+                        MazeGrid old_grid = null;
+                        while(iter.hasNext()){
+                            old_grid = iter.next();
+                            if(old_grid.equals(temp_grid)){
+                                switched = 1;
+                                break;
+                            }
+                        }
+                        if(switched == 1){
+                            if(old_grid.get_f_cost() < temp_grid.get_f_cost()){
+                                temp_grid.set_parent(old_grid.get_parent());
+
+                                agent1.open.remove(old_grid);
+                                agent1.open.add(temp_grid);
+                            }
+                        }
+                        
+
+                        if(switched == 0) agent1.open.add(temp_grid);
+                    }
                     
+                    if(agent1.curr_grid != null){
+                        //System.out.println("curr_grid2: "+ agent1.curr_grid.get_row()+ " "+ agent1.curr_grid.get_col());
+                    }
+                    else{
+                        //System.out.println("Maze is unsolvable.");
+                        //break;
+                        //agent1.curr_grid = agent1.open.lastElement().get_parent();
+                    }
+                    if(temp_idx == agent1.block_idx){
+                        counter++;
+                        
+                    }
+                    if(counter == 500 || agent1.curr_grid == null){
+                        //System.out.println("Goal unreachable");
+                        agent1.failed = 1;
+                        break;
+                    }
+                    if(agent1.curr_grid.get_row() == g_row && agent1.curr_grid.get_col()== g_col){
+                        agent1.last_grid = agent1.curr_grid;
+                        break;
+                    }
+
                 }
-                if(counter == 500 || agent1.curr_grid == null){
-                    //System.out.println("Goal unreachable");
-                    agent1.failed = 1;
-                    break;
-                }
-                if(agent1.curr_grid.get_row() == g_row && agent1.curr_grid.get_col()== g_col){
-                    agent1.last_grid = agent1.curr_grid;
-                    break;
-                }
 
-            }
-
-            //for(int i= 0; i< agent1.block.length; i++){
-            //  System.out.print("["+agent1.block[i][0]+","+agent1.block[i][1]+ "] ");
-            
-            //}
-            if(agent1.failed==0){
-                System.out.println(" ");
-
-                long endTime = System.nanoTime();
-
-                long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
-
-                char[][] new_maze = agent1.input_path(maze);
-                //char[][] new_maze2 = agent1.input_path(maze);
-
-                //maze.print_maze(new_maze);
-
-                System.out.println("grids traveled: "+ (agent1.grids_traveled-1));
-                System.out.println("grids processed: "+ (agent1.grids_popped-1));
-                System.out.println("runtime ms: "+ duration);
-                System.out.println("blocks hit: "+ agent1.block_hit);
-
-                //double best_grids = agent1.best_path(new_maze2, row_dim, col_dim)
-
+                //for(int i= 0; i< agent1.block.length; i++){
+                //  System.out.print("["+agent1.block[i][0]+","+agent1.block[i][1]+ "] ");
+                
+                //}
                 if(agent1.failed==0){
-                    int best_grids = agent1.best_path2();
+                    //System.out.println(" ");
 
-                    restart = false;
+                    long endTime = System.nanoTime();
 
-                    //System.out.println("optimal grids traveled 1: "+ );
-                    System.out.println("optimal grids traveled: "+ best_grids);
+                    long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
+
+                    char[][] new_maze = agent1.input_path(maze);
+                    //char[][] new_maze2 = agent1.input_path(maze);
+
+                    //maze.print_maze(new_maze);
+
+                    //System.out.println("grids traveled: "+ (agent1.grids_traveled-1));
+                    //System.out.println("grids processed: "+ (agent1.grids_popped-1));
+                    System.out.println("runtime ms: "+ duration);
+                    //System.out.println("blocks hit: "+ agent1.block_hit);
+
+                    //double best_grids = agent1.best_path(new_maze2, row_dim, col_dim)
+
+                    if(agent1.failed==0){
+                        int best_grids = agent1.best_path2();
+
+                        restart = false;
+
+                        times++;
+
+                        //System.out.println("optimal grids traveled 1: "+ );
+                        //System.out.println("optimal grids traveled: "+ best_grids);
+                    }
                 }
             }
         }
