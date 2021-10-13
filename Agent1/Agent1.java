@@ -58,7 +58,7 @@ public class Agent1{
         //Agent1 agent;
         
         //System.out.println(maze);
-        maze.print_maze(maze.maze);
+        //maze.print_maze(maze.maze);
 
         Agent1 agent1 = new Agent1();
 
@@ -78,8 +78,10 @@ public class Agent1{
 
             if(maze.maze[agent1.curr_grid.get_row()][agent1.curr_grid.get_col()] == 'D'){
 
-                agent1.curr_grid = agent1.curr_grid.get_parent();
-            }
+                if(agent1.curr_grid.get_parent()!= null){
+                    agent1.curr_grid = agent1.curr_grid.get_parent();
+                }
+            }   
 
             LinkedList<MazeGrid> path = agent1.forward_astar( g_row, g_col, maze);
 
@@ -133,7 +135,7 @@ public class Agent1{
                 counter++;
                 
             }
-            if(counter == 100 || agent1.curr_grid == null){
+            if(counter == 500 || agent1.curr_grid == null){
                 System.out.println("Goal unreachable");
                 agent1.failed = 1;
                 break;
@@ -158,7 +160,7 @@ public class Agent1{
         char[][] new_maze = agent1.input_path(maze);
         //char[][] new_maze2 = agent1.input_path(maze);
 
-        maze.print_maze(new_maze);
+        //maze.print_maze(new_maze);
 
         System.out.println("grids traveled: "+ (agent1.grids_traveled-1));
         System.out.println("grids processed: "+ (agent1.grids_popped-1));
@@ -357,7 +359,7 @@ public class Agent1{
 
             if(curr_grid == null){
                 //System.out.println("unsolvable");
-                //curr_grid = path.getLast();
+                curr_grid = path.getLast().get_parent();
                 return path;
             }
 
@@ -429,13 +431,15 @@ public class Agent1{
 
                 //System.out.println("temp_grid cords: "+ temp_row + ", " + temp_col);
 
-                curr_grid = curr_grid.get_parent();
+                if(curr_grid.get_parent() != null){
+                    curr_grid = curr_grid.get_parent();
+                }
                 curr_row = curr_grid.get_row();
                 curr_col  = curr_grid.get_col();
 
-                System.out.println("parent cords: "+ curr_row + ", " + curr_col);
-                System.out.println("dead end block cords: "+ cords[0] +" "+ cords[1]);
-                System.out.println("Dead End Grid: "+ maze.maze[cords[0]][cords[1]]);
+                //System.out.println("parent cords: "+ curr_row + ", " + curr_col);
+                //System.out.println("dead end block cords: "+ cords[0] +" "+ cords[1]);
+                //System.out.println("Dead End Grid: "+ maze.maze[cords[0]][cords[1]]);
                 grids_traveled++;
 
                 dead_end = 0;
