@@ -166,7 +166,7 @@ public class Agent1{
                 
                 //}
                 if(agent1.failed==0){
-                    //System.out.println(" ");
+                    System.out.println(" ");
 
                     long endTime = System.nanoTime();
 
@@ -177,10 +177,10 @@ public class Agent1{
 
                     //maze.print_maze(new_maze);
 
-                    //System.out.println("grids traveled: "+ (agent1.grids_traveled-1));
-                    //System.out.println("grids processed: "+ (agent1.grids_popped-1));
+                    System.out.println("grids traveled: "+ (agent1.grids_traveled-1));
+                    System.out.println("grids processed: "+ (agent1.grids_popped-1));
                     System.out.println("runtime ms: "+ duration);
-                    //System.out.println("blocks hit: "+ agent1.block_hit);
+                    System.out.println("blocks hit: "+ agent1.block_hit);
 
                     //double best_grids = agent1.best_path(new_maze2, row_dim, col_dim)
 
@@ -192,7 +192,7 @@ public class Agent1{
                         times++;
 
                         //System.out.println("optimal grids traveled 1: "+ );
-                        //System.out.println("optimal grids traveled: "+ best_grids);
+                        System.out.println("optimal grids traveled: "+ best_grids);
                     }
                 }
             }
