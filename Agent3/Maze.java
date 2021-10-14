@@ -92,9 +92,11 @@ public class Maze {
         		}
 
         		if (getCell(j, i).isActuallyBlocked()) {
-        			builder.append("X");
+        			builder.append("x");
+        		} else if (getCell(j, i).isOnShortestPath()) {
+        			builder.append(">");
         		} else if (getCell(j, i).isVisited()) {
-        			builder.append("O");
+        			builder.append("-");
         		} else {
         			builder.append(":");
         		}

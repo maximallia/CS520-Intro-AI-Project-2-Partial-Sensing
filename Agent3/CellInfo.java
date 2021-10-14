@@ -19,12 +19,15 @@ public class CellInfo {
 	private CellInfo parent; // COORDINATE OF THE CELL'S PARENT (THE PREVIOUS CELL IN THE PATH WE USED TO GET HERE)
 	private double g_value; // THE NUMBER OF STEPS IT'S TAKEN TO GET TO THIS CELL
 	private double h_estimate; // THE HEURISTIC ESTIMATE
+	
+	private boolean onShortestPath; // IDENTIFIER FOR IF THIS CELL IS ON THE SHORTEST PATH
+	// TO BE USED FOR PRINTING OUT THE MAZE DURING DEBUGGING
 
 	// CONSTRUCTOR
 	public CellInfo(Point position, int num_neighbors, double h_estimate, boolean actually_blocked) {
 		this.position = position; // GIVES THE COORDINATE OF THE CELL IN THE MAZE
 		this.num_neighbors = num_neighbors; // maze.java CHECKS FOR IF THE CURRENT CELL IS ON A BORDER OR IN A CORNER
-		this.blocks_sensed = 0;
+		this.blocks_sensed = -1;
 		this.neighbors_block = 0;
 		this.neighbors_empty = 0;
 		this.neighbors_unconfirmed = num_neighbors;
@@ -35,6 +38,7 @@ public class CellInfo {
 		this.parent = null; // DEFAULT PARENT (UNTIL CHANGED TO THE ACTUAL PARENT)
 		this.g_value = 0; // DEFAULT VALUE, WILL BE CHANGED WHEN CELLS ARE SEARCHED
 		this.h_estimate = h_estimate;
+		this.onShortestPath = false;
 	}
 
 
@@ -98,6 +102,10 @@ public class CellInfo {
 	public boolean isActuallyBlocked() { // GIVES THE REAL STATUS OF THE CELL BEING BLOCKED OR UNBLOCKED
 		return this.actually_blocked;
 	}
+	
+	public boolean isOnShortestPath() { // TO BE USED WHEN PRINTING OUT THE MAZE
+		return this.onShortestPath;
+	}
 
 
 
@@ -156,5 +164,11 @@ public class CellInfo {
 		this.actually_blocked = s;
 		return;
 	}
+	
+	public void setOnShortestPath() {
+		this.onShortestPath = true;
+		return;
+	}
+	
 
 }
