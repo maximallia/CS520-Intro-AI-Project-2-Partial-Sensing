@@ -29,7 +29,19 @@ public class MazeGrid  implements Comparable<MazeGrid>{
     public double h_function(int curr_row, int curr_col, int g_row, int g_col){
         double one = Math.abs(curr_row - g_row);
         double two = Math.abs(curr_col - g_col);
-        return one+two;
+
+        double d_one = curr_row - g_row;
+        double d_two = curr_col - g_col;
+
+        double d_row = 0 - g_row;
+        double d_col = 0 - g_col;
+
+        //tie breaker
+        double cross = Math.abs(d_one*d_col - d_two*d_row);
+
+        double new_h = one+two;
+
+        return new_h += cross*0.001;
     }
 
     public double get_g_cost(){
@@ -77,10 +89,6 @@ public class MazeGrid  implements Comparable<MazeGrid>{
         this.parent = parent;
     }
 
-
-    public boolean equals(MazeGrid other){
-        return this.get_row() == other.get_row() && this.get_col() == other.get_col();
-    }
 
     @Override
     public int compareTo(MazeGrid other){
