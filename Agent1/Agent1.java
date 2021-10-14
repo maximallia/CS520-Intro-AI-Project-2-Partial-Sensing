@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.io.*;
 //import org.javatuples.Pair;
 
@@ -175,7 +176,7 @@ public class Agent1{
                     char[][] new_maze = agent1.input_path(maze);
                     //char[][] new_maze2 = agent1.input_path(maze);
 
-                    //maze.print_maze(new_maze);
+                    maze.print_maze(new_maze);
 
                     System.out.println("grids traveled: "+ (agent1.grids_traveled-1));
                     System.out.println("grids processed: "+ (agent1.grids_popped-1));
@@ -267,6 +268,7 @@ public class Agent1{
             //System.out.println(block);
             
             //java's way of finding a subarray in 2d array
+            //if block info has been inputted
             boolean in_block = Arrays.stream(block).anyMatch(line->Arrays.equals(line, cords));
             if(in_block ){
                 //do not rewrite dead_end 2's
@@ -378,6 +380,7 @@ public class Agent1{
             //stopper++;
 
             curr_grid = fringe.poll();
+            grids_popped++;
 
             if(curr_grid == null){
                 //System.out.println("unsolvable");
@@ -387,7 +390,7 @@ public class Agent1{
 
             int curr_row = curr_grid.get_row();
             int curr_col = curr_grid.get_col();
-            grids_popped++;
+            
 
             //System.out.println("fringe: "+ curr_row+ " "+ curr_col);
 
@@ -407,7 +410,6 @@ public class Agent1{
 
                 maze.maze[curr_row][curr_col] = 'D';
                 before_change[curr_row][curr_col] = 'D';
-
                 //System.out.println("curr_grid cords at dead end: "+ curr_row +" "+ curr_col);
 
                 block[block_idx][0] = curr_row;
@@ -438,17 +440,12 @@ public class Agent1{
                 block[block_idx][0] = cords[0];
                 block[block_idx][1] = cords[1];
                 block_idx++;
-
-                //path_cords[i][0] = cords[0];
-                //path_cords[i][1] = cords[1];
-                
-                //i++;
             
                 path.add(curr_grid);
+
+                grids_traveled++;
                 grids_popped++;
 
-
-                //fringe.add(temp_grid);
                 path.add(curr_grid);
 
                 //System.out.println("temp_grid cords: "+ temp_row + ", " + temp_col);
@@ -462,7 +459,7 @@ public class Agent1{
                 //System.out.println("parent cords: "+ curr_row + ", " + curr_col);
                 //System.out.println("dead end block cords: "+ cords[0] +" "+ cords[1]);
                 //System.out.println("Dead End Grid: "+ maze.maze[cords[0]][cords[1]]);
-                grids_traveled++;
+                //grids_traveled++;
 
                 dead_end = 0;
 
@@ -470,15 +467,9 @@ public class Agent1{
                 directions = possible_paths(curr_row, curr_col, before_change, path_cords);
             }
 
-            Collections.sort(directions);
+            //Collections.sort(directions);
 
             Iterator<MazeGrid> value = directions.iterator();
-
-            /*if(possible_directions==0 && dead_end == 1){
-                //path=null;
-                return path;
-            }*/
-
 
             while(value.hasNext()){
                 
@@ -504,6 +495,7 @@ public class Agent1{
                     block_idx++;
                 
                     path.add(curr_grid);
+                    //grids_traveled++;
 
                     //dead_end = 0;
 
@@ -526,8 +518,6 @@ public class Agent1{
                     //path_cords[i][1] = curr_col;
 
                     before_change[curr_row][curr_col] = 'C';
-
-                    int[] cords = new int[] {curr_row, curr_col};
 
                     fringe.add(temp_grid);
                     path.add(curr_grid);
