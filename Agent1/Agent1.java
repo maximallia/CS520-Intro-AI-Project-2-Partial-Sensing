@@ -176,7 +176,7 @@ public class Agent1{
                     char[][] new_maze = agent1.input_path(maze);
                     //char[][] new_maze2 = agent1.input_path(maze);
 
-                    maze.print_maze(new_maze);
+                    //maze.print_maze(new_maze);
 
                     System.out.println("grids traveled: "+ (agent1.grids_traveled-1));
                     System.out.println("grids processed: "+ (agent1.grids_popped-1));
@@ -269,6 +269,8 @@ public class Agent1{
             
             //java's way of finding a subarray in 2d array
             //if block info has been inputted
+            // cite link:
+            // https://stackoverflow.com/questions/58921593/how-can-i-check-if-a-2d-array-contains-an-array
             boolean in_block = Arrays.stream(block).anyMatch(line->Arrays.equals(line, cords));
             if(in_block ){
                 //do not rewrite dead_end 2's
