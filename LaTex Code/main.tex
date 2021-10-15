@@ -1,0 +1,112 @@
+\documentclass{homeworg}
+\usepackage{algorithm} 
+\usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage[section]{placeins}
+
+\title{CS520 Project 1: Voyage Into The Unknown}
+\author{Daniel Ying (dty16) Sec 198:520:01 \\Zachary Tarman (zpt2) Sec 198:520:01 \\ Pravin Kumaar (pr482) Sec 198:520:03 }
+
+\usepackage{xcolor}
+\usepackage{proof}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Submitter}: Daniel Ying
+
+\textbf{Honor Code}:
+
+I abide to the rules laid in the Project 2: Partial Sensing description and I have not used anyone else’s work for the project, and my work is only my own and my group’s.
+
+\hrulefill
+
+I acknowledge and accept the Honor Code and rules of Project 2.
+
+\textbf{Signed}: Daniel Ying (dty16), Zachary Tarman (zpt2), Pravin Kumaar (pr482)
+
+\hrulefill
+
+\textbf{Workload}: 
+
+Daniel Ying: Coded Agent 1 and Agent 2. Formatted the report in LaTeX. Recorded data and graph for Agent 1.
+
+Zachary Tarman: Coded Agent 3. Recorded data and graph for Agent 3.
+
+Pravin Kumaar: Coded Agent 2.
+
+Together: Brainstormed the Algorithm of Agent 4. Discussed the inferences to the improved Agent 4 algorithm. Discussed problems in the assignment and code.
+\vspace{.5cm}
+
+\newpage
+\exercise
+AGENT 1 (BLIND AGENT) WITHOUT SENSING
+
+AGENT 1 OBSERVATION:
+
+We did 11 densities (0, 3.33, 6.66, 9.99, 13.33, 16.66, 19.99, 23.33, 26.66, 29.99, 33.33) with data from 30 trials for each densities and took the average of these densities to plot the graphs below. The graphs below include Agent 1's trajectory path length, Agent 1's number of processed grids, the runtime of Agent 1, the number of block hits in Agent 1, and the length of the optimal path based on Agent 1's discovered information.
+
+Agent 1 is implemented without the field of sight to detect neighbors on its four sides and without the ability of sensing the possible number of blocks around it (the 8 neighbors surround Agent 1). Because of Agent 1's limitations, it can only detect a block when it hits a block and then re-plan its path. Thus, in the case of updating the maze's block location, Agent 1 can only update one block at a time, much unlike Agent 2 which has the field of sight to record content of its neighbors.
+
+Because at most only one block can be recorded in a path iteration, the number of block hits by Agent 1 would be rather high, for Agent 1 can only move around a block when it learns the blocks location. This would also mean, the number of blocks Agent 1 learns to avoid only increases by one for each iteration, explaining Agent 1's high number of block hits. Of course, this phenomenon can also be explained by the increasing density of block grids in the maze (as shown in figure 4).
+
+Despite Agent 1's high number of block hits, Agent 1 is not without merits: the runtime. Though Agent 1 has a long trajectory length, high number of grids processed, and high number of block hits, its runtime is quite fast. Thus, at the cost of producing a longer path length and processing more grids and block hits, Agent 1 produced a efficient runtime.
+
+\newpage
+AGENT 1 GRAPH:
+\begin{figure}[!htb]
+  	\centering
+  	\includegraphics*[scale=0.3]{Agent1_traj.png}
+	\caption{Agent 1 Trajectory Length vs Density (Red: Trajectory path length of Agent1).}
+	\label{fig:example}
+\end{figure}
+
+\begin{figure}[!htb]
+  	\centering
+  	\includegraphics*[scale=0.3]{Agent1.pop.png}
+	\caption{Agent 1 Processed Grids vs Density (Blue: number of grids processed by Agent1).}
+	\label{fig:example}
+\end{figure}
+
+\begin{figure}[!htb]
+  	\centering
+  	\includegraphics*[scale=0.3]{Agent1.time.png}
+	\caption{Agent 1 Runtime (ms) vs Density (Black: runtime for Agent1).}
+	\label{fig:example}
+\end{figure}
+
+\begin{figure}[!htb]
+  	\centering
+  	\includegraphics*[scale=0.3]{Agent1.blocks.png}
+	\caption{Agent 1 Blocks Hit vs Density (Black: number of blocks hit by Agent1).}
+	\label{fig:example}
+\end{figure}
+
+\begin{figure}[!htb]
+  	\centering
+  	\includegraphics*[scale=0.3]{Agent1.opt.png}
+	\caption{Agent 1 Optimal Discovered Path vs Density (Orange:Optimal Discovered Path for Agent1).}
+	\label{fig:example}
+\end{figure}
+
+\newpage
+\exercise*
+AGENT 2 (FIELD OF SIGHT) WITHOUT SENSING
+
+AGENT 2 OBSERVATION:
+
+AGENT 2 GRAPHS:
+
+
+\newpage
+\exercise*
+Agent 3 (with Sensing): graphs and observations.
+
+Answer:
+
+N/A
+
+
+\end{document}
