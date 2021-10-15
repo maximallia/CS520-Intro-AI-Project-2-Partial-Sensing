@@ -49,10 +49,18 @@ public class Maze {
                 // VERIFYING HOW MUCH THE HEURISTIC ESTIMATE IS FROM THIS GIVEN CELL
                 	// GIVEN THAT THE MANHATTAN HEURISTIC YIELDED THE FASTEST RUNTIME IN PROJECT 1,
                 	// WE'RE GOING TO BE USING THAT AS THE HEURISTIC HERE AS WELL
-                double h_est = Math.abs(col - (cols - 1)) + Math.abs(row - (rows - 1)); 
+                double one = Math.abs(row - (rows - 1));
+                double two = Math.abs(col - (cols - 1));
+                double d_one = row - (rows - 1);
+                double d_two = col - (cols - 1);
+                double d_row = 0 - (rows - 1);
+                double d_col = 0 - (cols - 1);
+                double cross = Math.abs(d_one*d_col - d_two*d_row);
+                double new_h = one + two;
+                new_h += cross * 0.001;
 
                 // NEW CELL BEING INSERTED INTO THE MAZE WITH THE CORRECT NUMBER OF NEIGHBORS, THE RIGHT HEURISTIC ESTIMATE, AND RANDOMIZED "BLOCKED" STATUS
-                CellInfo temp2 = new CellInfo(pos, neighbors, h_est, gen_block(prob));
+                CellInfo temp2 = new CellInfo(pos, neighbors, new_h, gen_block(prob));
                 temp.add(temp2);
             }
 

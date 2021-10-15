@@ -349,6 +349,17 @@ public class Agent3 {
 				} else { // THE SURROUNDINGS WILL BE CHECKED ON THE NEXT LEVEL DOWN IF THE FIRST CONDITION IS MET
 					// OTHERWISE, WE SHOULD UPDATE THEM HERE
 					checkSurroundings(maze.getCell(neighbor_x, neighbor_y));
+					
+					if (maze.getCell(neighbor_x, neighbor_y).getNeighborsUnconfirmed() != 0) { // IF IT DID EQUAL 0, THERE WOULD BE NOTHING MORE TO INFER
+						if (maze.getCell(neighbor_x, neighbor_y).getBlocksSensed() >= 0) { // IF WE HAVEN'T SCANNED YET, WE DON'T WANT TO PREMATURELY MAKE INFERENCES
+							if ((maze.getCell(neighbor_x, neighbor_y).getNeighborsBlocked() == maze.getCell(neighbor_x, neighbor_y).getBlocksSensed()) || 
+									(maze.getCell(neighbor_x, neighbor_y).getNeighborsEmpty() == 
+									maze.getCell(neighbor_x, neighbor_y).getNeighbors() - maze.getCell(neighbor_x, neighbor_y).getBlocksSensed())) { 
+								propagate.add(maze.getCell(neighbor_x, neighbor_y)); // WE CAN INFER THINGS PAST THIS CELL
+							}
+						}
+
+					}
 				}
 
 			}
@@ -526,7 +537,7 @@ public class Agent3 {
 			if (cell_f < toExplore.get(i).getF()) {
 				toExplore.add(i, newCell);
 				return toExplore;
-			} else if (cell_f <= toExplore.get(i).getF()) {
+			} else if (cell_f == toExplore.get(i).getF()) {
 				double cell_g = newCell.getG();
 				if (cell_g <= toExplore.get(i).getG()) {
 					toExplore.add(i, newCell);
