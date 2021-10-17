@@ -676,8 +676,8 @@ public class Agent3 {
 				
 				plannedPath = mazeRunner.plan(currCell);
 				if (plannedPath == null) {
-					System.out.println("Maze is unsolvable.");
-					System.out.println(mazeRunner.maze.toString());
+					System.out.println("Maze is unsolvable.\n");
+					// System.out.println(mazeRunner.maze.toString());
 					return 'F';
 				}
 				badPath = false;
@@ -703,8 +703,8 @@ public class Agent3 {
 				// AND WE NEED TO REPLAN AS WELL
 				plannedPath = mazeRunner.plan(currCell);
 				if (plannedPath == null) {
-					System.out.println("Maze is unsolvable.");
-					System.out.println(mazeRunner.maze.toString());
+					System.out.println("Maze is unsolvable.\n");
+					// System.out.println(mazeRunner.maze.toString());
 					return 'F';
 				}
 				continue;
@@ -769,7 +769,7 @@ public class Agent3 {
 		}
 
 		System.out.println("Path Found!");
-		System.out.println(mazeRunner.maze.toString());
+		// System.out.println(mazeRunner.maze.toString());
 		mazeRunner.printStats();
 
 		return 'S';
