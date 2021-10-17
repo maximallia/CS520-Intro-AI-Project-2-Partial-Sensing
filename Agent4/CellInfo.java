@@ -28,7 +28,7 @@ public class CellInfo {
 	private Association unconf_neighbors;
 
 	// CONSTRUCTOR
-	public CellInfo(Point position, int num_neighbors, double h_estimate, boolean actually_blocked, Association unconf_neighbors) {
+	public CellInfo(Point position, int num_neighbors, double h_estimate, boolean actually_blocked) {
 		this.position = position; // GIVES THE COORDINATE OF THE CELL IN THE MAZE
 		this.num_neighbors = num_neighbors; // maze.java CHECKS FOR IF THE CURRENT CELL IS ON A BORDER OR IN A CORNER
 		this.blocks_sensed = -1;
@@ -43,7 +43,7 @@ public class CellInfo {
 		this.g_value = 0; // DEFAULT VALUE, WILL BE CHANGED WHEN CELLS ARE SEARCHED
 		this.h_estimate = h_estimate;
 		this.onShortestPath = false;
-		this.unconf_neighbors = unconf_neighbors;
+		this.unconf_neighbors = null;
 	}
 
 
@@ -119,7 +119,9 @@ public class CellInfo {
 	// SET METHODS
 	public void setBlocksSensed(int s) { // SETS THE NUMBER OF BLOCKS SENSED AT THIS PARTICULAR CELL
 		this.blocks_sensed = s;
-		this.unconf_neighbors.updateBlockCount(s); // ALSO UPDATES THE COUNT IN THE ASSOCIATION OBJECT
+		this.unconf_neighbors.updateBlockCount(s - this.neighbors_block); // ALSO UPDATES THE COUNT IN THE ASSOCIATION OBJECT
+			// WE WANT TO MAKE SURE THAT WE TAKE INTO ACCOUNT NEIGHBORS THAT HAVE ALREADY BEEN CONFIRMED
+			// TO BE BLOCKED. WE WOULDN'T WANT TO ACCIDENTALLY "INFER" A BLOCK THAT ISN'T THERE
 		return;
 	}
 	
@@ -177,7 +179,12 @@ public class CellInfo {
 		return;
 	}
 	
-
+	public void setUnconfirmedNeighbors(Association a) {
+		this.unconf_neighbors = a;
+		return;
+	}
+	
+	
 	// WHEN A NEIGHBORING CELL IS CONFIRMED TO BE SOMETHING (EITHER BLOCKED OR EMPTY),
 		// WE NEED TO UPDATE THE ASSOCIATION AROUND THIS CELL
 	public void removeFromUnconfirmed(CellInfo neighbor) {
@@ -188,7 +195,6 @@ public class CellInfo {
 			
 			if (neighbor.getPos().getX() == temp.getPos().getX() &&
 					neighbor.getPos().getY() == temp.getPos().getY()) {
-				
 				this.unconf_neighbors.allUnknowns.remove(i);
 				if (neighbor.isBlocked()) {
 					this.unconf_neighbors.totalBlocks--;
@@ -202,6 +208,10 @@ public class CellInfo {
 		return;
 	}
 
+	public Association getAssociationInfo() {
+		return this.unconf_neighbors;
+	}
+	
 	// RETRIEVES A LIST OF ALL OF THE UNCONFIRMED NEIGHBORS FOR THE GIVEN CELL
 	public ArrayList<Association.Unit> retrieveUnconfirmedNeighbors() {
 		return this.unconf_neighbors.allUnknowns;

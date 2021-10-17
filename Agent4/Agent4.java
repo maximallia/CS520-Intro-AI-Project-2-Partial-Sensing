@@ -339,22 +339,31 @@ public class Agent4 {
 				
 				int neighbor_x = (int) neighbors.get(i).getX();
 				int neighbor_y = (int) neighbors.get(i).getY();
+				
 				// WE CAN INFER / CONFIRM SOMETHING ABOUT THE NEIGHBOR'S STATUS
 				if (maze.getCell(neighbor_x, neighbor_y).isUnconfirmed() && (restBlocked || restEmpty)) {
 					if (restBlocked) {
 						maze.getCell(neighbor_x, neighbor_y).setBlocked();
-						// System.out.println("We've inferred " + neighbor_x + ", " + neighbor_y + " to be blocked.");
+						for (int j = 0; j < facts.size(); j++) { // WE NEED TO UPDATE OUR KNOWLEDGE BASE
+							removeFromAssociation(maze.getCell(neighbor_x, neighbor_y), j);
+						}
+						System.out.println("We've inferred " + neighbor_x + ", " + neighbor_y + " to be blocked.");
 					} else if (restEmpty) {
 						maze.getCell(neighbor_x, neighbor_y).setEmpty();
-						// System.out.println("We've inferred " + neighbor_x + ", " + neighbor_y + " to be empty.");
+						for (int j = 0; j < facts.size(); j++) { // WE NEED TO UPDATE OUR KNOWLEDGE BASE
+							removeFromAssociation(maze.getCell(neighbor_x, neighbor_y), j);
+						}
+						System.out.println("We've inferred " + neighbor_x + ", " + neighbor_y + " to be empty.");
 					}
 					// NOW THAT THIS CELL'S STATUS HAS BEEN UPDATED, THEIR NEIGHBORS MIGHT BE INTERESTED IN UPDATING THEIR KNOWLEDGE AS WELL
 					// WE'RE NOT SENSING (DIFFERENT PHASE) AROUND THIS NEIGHBOR CELL BUT WE CAN POSSIBLY INFER SOMETHING AS WELL
 					propagate.add(maze.getCell(neighbor_x, neighbor_y)); // WILL ALSO UPDATE THIS NEIGHBOR BELOW THIS LOOP
+				
 				} else { // THE SURROUNDINGS WILL BE CHECKED ON THE NEXT LEVEL DOWN IF THE FIRST CONDITION IS MET
 					// OTHERWISE, WE SHOULD UPDATE THEM HERE
 					checkSurroundings(maze.getCell(neighbor_x, neighbor_y));
 					
+					// WE CAN ALSO DO INFERENCE CHECKS HERE, JUST TO SEE IF WE'VE FOUND OUT ANYTHING DURING THIS TIME
 					if (maze.getCell(neighbor_x, neighbor_y).getNeighborsUnconfirmed() != 0) { // IF IT DID EQUAL 0, THERE WOULD BE NOTHING MORE TO INFER
 						if (maze.getCell(neighbor_x, neighbor_y).getBlocksSensed() >= 0) { // IF WE HAVEN'T SCANNED YET, WE DON'T WANT TO PREMATURELY MAKE INFERENCES
 							if ((maze.getCell(neighbor_x, neighbor_y).getNeighborsBlocked() == maze.getCell(neighbor_x, neighbor_y).getBlocksSensed()) || 
@@ -382,9 +391,26 @@ public class Agent4 {
 	// THE POINT OF THIS METHOD WOULD BE TO TRY TO EVALUATE IF OUR NEXT STEP IS GOING TO BE BLOCKED
 		// WE'RE TRYING TO LIMIT OUR SCOPE SO THAT WE'RE NOT INFERRING FOREVER, BUT IF WE FIND OUT
 		// OTHER STUFF ALONG WITH WAY, THAT'S AN ADDED BONUS
-	public void inferExtended(CellInfo pos) {
-		
-		// TODO IMPLEMENT inferExtended
+	public void inferExtended(CellInfo next) {
+				
+		for (int i = 0; i < facts.size(); i++) {
+			if (facts.get(i).contains(next) >= 0) {
+				ArrayList<CellInfo> confirmed = facts.get(i).process();
+				if (confirmed != null) {
+					for (int j = 0; j < confirmed.size(); j++) {
+						for (int k = 0; k < facts.size(); k++) {
+							removeFromAssociation(confirmed.get(j), k);
+							ArrayList<CellInfo> remainingUnconfirmed = facts.get(k).getCells();
+							for (int l = 0; l < facts.size(); l++) {
+								System.out.println("We're going to recurse with inferExtended.");
+								inferExtended(remainingUnconfirmed.get(l));
+							}
+						}
+						infer(confirmed.get(j));
+					}
+				}
+			}
+		}
 		
 		return;
 		
@@ -641,6 +667,28 @@ public class Agent4 {
 		return;
 		
 	}
+	
+	// THIS IS USED TO REMOVE A RECENTLY CONFIRMED CELL FROM OUR FACTS IN THE KNOWLEDGE BASE
+	public void removeFromAssociation(CellInfo currCell, int i) {
+		
+		// CHECK WILL EITHER EQUAL THE POSITION OF THE CELL IN THE ASSOCIATION OR -1 (MEANING NOT FOUND)
+		int check = facts.get(i).contains(currCell);
+		
+		if (check >= 0) { // NOW WE KNOW WE CAN PHYSICALLY REMOVE IT
+			int factor = facts.get(i).allUnknowns.get(check).getFactor();
+			facts.get(i).allUnknowns.remove(check);
+			if (currCell.isBlocked()) { // IF IT WAS BLOCKED, WE HAVE TO CHANGE THE RHS OF THE ASSOCIATION APPROPRIATELY
+				facts.get(i).totalBlocks -= factor;
+			}
+		}
+		
+		// IF WE'VE REDUCED THIS ASSOCIATION TO NOTHING, THEN WE CAN PITCH IT
+		if (facts.get(i).allUnknowns.size() == 0) {
+			facts.remove(i);
+		}
+		
+		return;
+	}
 
 
 
@@ -670,14 +718,20 @@ public class Agent4 {
 			CellInfo currCell = plannedPath.poll();
 			
 			// DEBUGGING STATEMENT
-			// System.out.println("Agent is currently in " + currCell.getPos().getX() + ", " + currCell.getPos().getY());
+			System.out.println("Agent is currently in " + currCell.getPos().getX() + ", " + currCell.getPos().getY());
 			
 			// HAVE WE HIT THE GOAL CELL YET?
 			if (currCell.getPos().getX() == mazeRunner.cols - 1 && currCell.getPos().getY() == mazeRunner.rows - 1) { // WE'VE HIT THE GOAL CELL
 				break;
 			}
-
 			// WE HAVEN'T HIT THE GOAL CELL, SO WE CONTINUE ONWARD
+			
+			// IF THIS CELL WAS UNCONFIRMED BEFORE, WE NEED TO UPDATE ALL OF OUR FACTS IN THE KNOWLEDGE BASE
+			if (currCell.isUnconfirmed()) {
+				for (int i = 0; i < mazeRunner.facts.size(); i++) {
+					mazeRunner.removeFromAssociation(currCell, i);
+				}
+			}
 			currCell.setEmpty(); // THE CELL WE ARE CURRENTLY IS EMPTY / UNBLOCKED
 			if (!currCell.isVisited()) { // IF THE CELL HAS ALREADY BEEN VISITED THEN WE DON'T NEED TO SENSE (SAVING SOME COMPUTATIONAL TIME)
 				mazeRunner.sense(currCell); // SENSE HOW MANY NEIGHBORS ARE BLOCKED (BUT NOT WHERE THE BLOCKS ARE)
@@ -685,6 +739,39 @@ public class Agent4 {
 			currCell.setVisited(); // WE HAVE NOW OFFICIALLY VISITED THIS CELL
 			mazeRunner.infer(currCell); // INFER WHAT WE CAN ABOUT OUR SURROUNDINGS AND UPDATE KNOWLEDGE BASE
 
+			
+			// NOW WHAT MORE CAN WE INFER? WHAT CAN WE FIGURE OUT ABOUT THE NEXT CELL IN OUR PATH?
+				// WE'RE GONNA LOOK AT THE CURRENT AND PREVIOUS CELL TO CREATE A NEW EQUATION TO PUT INTO OUR KNOWLEDGE BASE
+					// THEY'RE GOING TO HAVE AT LEAST SOME COMMON NEIGHBORS, BUT THE QUESTION IS WHETHER WE CAN FIND
+					// ANYTHING HELPFUL FROM THIS SYNTHESIS OF THE TWO NEIGHBORS' KNOWLEDGE
+				// OBVIOUSLY, IF WE'RE STILL IN THE START CELL, THERE'S NOWHERE TO LOOK BACK TO
+			if (currCell.getPos().getX() != 0 || currCell.getPos().getY() != 0) {
+				Association possiblyHelpful = currCell.getAssociationInfo().synthesize(currCell.getParent().getAssociationInfo());
+				
+				if (possiblyHelpful != null) {
+					ArrayList<CellInfo> confirmed = possiblyHelpful.process();
+					if (confirmed != null) {
+						for (int j = 0; j < confirmed.size(); j++) {
+							for (int k = 0; k < mazeRunner.facts.size(); k++) {
+								mazeRunner.removeFromAssociation(confirmed.get(j), k);
+							}
+							mazeRunner.infer(confirmed.get(j));
+						}
+					} else {
+						mazeRunner.facts.add(possiblyHelpful);
+					}
+				}
+			}
+
+			// WE'RE GOING TO TRY TO LOOK AT THE NEXT CELL IN THE PATH AND SEE IF OUR PATH IS STILL ALRIGHT
+			mazeRunner.inferExtended(plannedPath.peekFirst());
+			// NOW WE'VE DONE ALL THE INFERRING WE POSSIBLY CAN FOR THE NEXT CELL AHEAD
+				// THE REASON WE DON'T TRY TO MAKE A NEW ASSOCIATION WITH THE NEXT CELL
+				// IS THAT THERE HAS BEEN NOTHING SENSED FROM THAT CELL YET
+				// AND THIS IS A KEY PIECE OF INFORMATION FOR CREATING A NEW ASSOCIATION
+				// SO WE ONLY SYNTHESIZE FROM VISITED, NON-BLOCKED CELLS WHICH HAVE A "SENSED" VALUE
+			
+			
 			// HAVE WE HAD AN UPDATE THAT REQUIRES US TO REPLAN?
 			// CHECK IF WE'VE HAD AN UPDATE (BLOCK) IN THE PATH THAT REQUIRES US TO REPLAN
 			for (int i = 0; i < plannedPath.size(); i++) {
@@ -706,7 +793,7 @@ public class Agent4 {
 				plannedPath = mazeRunner.plan(currCell);
 				if (plannedPath == null) {
 					System.out.println("Maze is unsolvable.\n");
-					// System.out.println(mazeRunner.maze.toString());
+					System.out.println(mazeRunner.maze.toString());
 					return 'F';
 				}
 				badPath = false;
@@ -724,16 +811,46 @@ public class Agent4 {
 				mazeRunner.collisions++;
 				
 				// DEBUGGING STATEMENT
-				// System.out.println("We've hit a block at coordinate " + obstruction.getPos().toString());
+				System.out.println("We've hit a block at coordinate " + obstruction.getPos().toString());
 				
-				mazeRunner.infer(obstruction); // WE CAN UPDATE OUR KNOWLEDGE BASE 
+				// WE NEED TO UPDATE OUR KNOWLEDGE BASE
+				Point n = new Point((int) obstruction.getPos().getX(), (int) obstruction.getPos().getY() - 1);
+				Point nw = new Point((int) obstruction.getPos().getX() - 1, (int) obstruction.getPos().getY() - 1);
+				Point w = new Point((int) obstruction.getPos().getX() - 1, (int) obstruction.getPos().getY());
+				Point sw = new Point((int) obstruction.getPos().getX() - 1, (int) obstruction.getPos().getY() + 1);
+				Point s = new Point((int) obstruction.getPos().getX(), (int) obstruction.getPos().getY() + 1);
+				Point se = new Point((int) obstruction.getPos().getX() + 1, (int) obstruction.getPos().getY() + 1);
+				Point e = new Point((int) obstruction.getPos().getX() + 1, (int) obstruction.getPos().getY());
+				Point ne = new Point((int) obstruction.getPos().getX() + 1, (int) obstruction.getPos().getY() - 1);
+
+				ArrayList<Point> neighbors = new ArrayList<Point>();
+				neighbors.add(n);
+				neighbors.add(nw);
+				neighbors.add(w);
+				neighbors.add(sw);
+				neighbors.add(s);
+				neighbors.add(se);
+				neighbors.add(e);
+				neighbors.add(ne);				
+				
+				for (int i = 0; i < neighbors.size(); i++) {
+					if (mazeRunner.inBounds(neighbors.get(i))) {
+						mazeRunner.checkSurroundings(mazeRunner.maze.getCell((int) neighbors.get(i).getX(), (int) neighbors.get(i).getY()));
+						mazeRunner.maze.getCell((int) neighbors.get(i).getX(), (int) neighbors.get(i).getY()).removeFromUnconfirmed(obstruction);
+					}
+				}
+				for (int i = 0; i < mazeRunner.facts.size(); i++) {
+					mazeRunner.removeFromAssociation(obstruction, i);
+				}
+				
+				mazeRunner.infer(obstruction); 
 				// WE CAN'T SENSE THOUGH SINCE WE CAN'T OCCUPY THAT CELL
 
 				// AND WE NEED TO REPLAN AS WELL
 				plannedPath = mazeRunner.plan(currCell);
 				if (plannedPath == null) {
 					System.out.println("Maze is unsolvable.\n");
-					// System.out.println(mazeRunner.maze.toString());
+					System.out.println(mazeRunner.maze.toString());
 					return 'F';
 				}
 				continue;
@@ -798,7 +915,7 @@ public class Agent4 {
 		}
 
 		System.out.println("Path Found!");
-		// System.out.println(mazeRunner.maze.toString());
+		System.out.println(mazeRunner.maze.toString());
 		mazeRunner.printStats();
 
 		return 'S';

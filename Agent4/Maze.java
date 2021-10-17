@@ -65,9 +65,18 @@ public class Maze {
                 double cross = Math.abs(d_one*d_col - d_two*d_row);
                 double new_h = one + two;
                 new_h += cross * 0.001;
-                
-                
-                // THE POINT OF THIS IS TO HAVE THE CELL KEEP TRACK OF ALL UNCONFIRMED CELLS AROUND IT
+
+                // NEW CELL BEING INSERTED INTO THE MAZE WITH THE CORRECT NUMBER OF NEIGHBORS, THE RIGHT HEURISTIC ESTIMATE, AND RANDOMIZED "BLOCKED" STATUS
+                CellInfo temp2 = new CellInfo(pos, neighbors, new_h, gen_block(prob));
+                temp.add(temp2);
+            }
+
+            maze_structure.add(temp);
+        }
+        
+        for (int col = 0; col < cols; col++) {
+        	for (int row = 0; row < rows; row++) {
+        		 // THE POINT OF THIS IS TO HAVE THE CELL KEEP TRACK OF ALL UNCONFIRMED CELLS AROUND IT
                 // IT CAN THEN "SPEAK" TO OTHER CELLS AROUND IT AND COMMUNICATE THIS INFORMATION
                 	// IN THE HOPES THAT THEY SHARE KNOWLEDGE TO INFER NEW THINGS
                 Point n = new Point(col, row - 1);
@@ -97,13 +106,12 @@ public class Maze {
         			}
         		}
         		Association unconf = new Association(unconfNeighbors, -1);
-
-                // NEW CELL BEING INSERTED INTO THE MAZE WITH THE CORRECT NUMBER OF NEIGHBORS, THE RIGHT HEURISTIC ESTIMATE, AND RANDOMIZED "BLOCKED" STATUS
-                CellInfo temp2 = new CellInfo(pos, neighbors, new_h, gen_block(prob), unconf);
-                temp.add(temp2);
-            }
-
-            maze_structure.add(temp);
+        		maze_structure.get(col).get(row).setUnconfirmedNeighbors(unconf);
+        		/* System.out.println("Currently adding " + maze_structure.get(col).get(row).getPos().getX() +
+        				", " + maze_structure.get(col).get(row).getPos().getY() +
+        				" to the maze structure.");
+        		maze_structure.get(col).get(row).getAssociationInfo().printAssociation(); */
+        	}
         }
 
         // MAKING SURE THAT THE START AND GOAL CELLS ARE UNBLOCKED FOR US
