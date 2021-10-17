@@ -101,10 +101,10 @@ public class Association {
 		}
 		
 		// FOR DEBUGGING PURPOSES
-		System.out.print("Currently trying to synthesize... ");
+		/* System.out.print("Currently trying to synthesize... ");
 		this.printAssociation();
 		System.out.print(", ");
-		other.printAssociation();
+		other.printAssociation(); */
 		
 		int updatedBlocks; // THIS WILL GIVE US THE NEW BLOCK COUNT OF THE SYNTHESIZED ASSOCIATION (RHS OF EQUATION)
 		boolean otherFirst = false; // THIS INDICATES WHICH OF THE EXISTING ASSOCIATIONS WILL BE SUBTRACTED FROM THE OTHER
@@ -146,8 +146,8 @@ public class Association {
 		Association result = new Association(updatedUnknowns, updatedBlocks);
 		
 		// FOR DEBUGGING PURPOSES
-		System.out.println("We were able to find a new possibly useful association.");
-		result.printAssociation();
+		/* System.out.println("We were able to find a new possibly useful association.");
+		result.printAssociation(); */
 		
 		return result;
 				
@@ -163,27 +163,27 @@ public class Association {
 		ArrayList<CellInfo> cellsThatChanged = new ArrayList<CellInfo>(); // STORES NEWLY CONFIRMED CELLS
 		
 		// FOR DEBUGGING PURPOSES
-		System.out.println("Currently processing...");
-		this.printAssociation();
+		/* System.out.println("Currently processing...");
+		this.printAssociation(); */
 		
 		// INFERENCE RULE 1
 		if (this.allUnknowns.size() == 1) {
 			// WE KNOW THE IDENTITY OF THIS CELL BECAUSE THERE'S ONLY ONE TERM IN THE EQUATION
 			// VERY POWERFUL INFERENCE TOOL, BUT NOT TOO COMMON TO OCCUR
-			System.out.println("We've entered IR1.");
+			// System.out.println("We've entered IR1.");
 			CellInfo temp = this.allUnknowns.get(0).getCell();
 			if (this.totalBlocks == this.allUnknowns.get(0).getFactor()) {
 				temp.setBlocked();
 				cellsThatChanged.add(temp);
-				System.out.println("IR1: We processed an association and found that " +
+				/* System.out.println("IR1: We processed an association and found that " +
 						temp.getPos().getX() + ", " + temp.getPos().getY() +
-						" was able to be confirmed as blocked.");
+						" was able to be confirmed as blocked."); */
 			} else if (this.totalBlocks == 0) {
 				temp.setEmpty();
 				cellsThatChanged.add(temp);
-				System.out.println("IR1: We processed an association and found that " +
+				/* System.out.println("IR1: We processed an association and found that " +
 						temp.getPos().getX() + ", " + temp.getPos().getY() +
-						" was able to be confirmed as empty.");
+						" was able to be confirmed as empty."); */
 			}
 			
 			return cellsThatChanged;
@@ -200,26 +200,27 @@ public class Association {
 			sum += this.allUnknowns.get(a).getFactor();
 		}
 		
-		System.out.println("Positive factors: " + positiveFactors + ", sum: " + sum + ", positive sum: " + positiveSum + ", size: " + this.allUnknowns.size());
+		// DEBUGGING STATEMENT
+		// System.out.println("Positive factors: " + positiveFactors + ", sum: " + sum + ", positive sum: " + positiveSum + ", size: " + this.allUnknowns.size());
 		
 		// INFERENCE RULE 2
 		if (sum == 0 && this.allUnknowns.size() == 2 && this.totalBlocks == Math.abs(this.allUnknowns.get(0).getFactor())) {
 			// ONE OF THESE TWO VARIABLES MUST BE BLOCKED
 				// WE SEE THE DIFFERENCE IN THEIR FACTORS MAKES ZERO, SO THE CELL WITH THE POSITIVE FACTOR
 				// MUST BE BLOCKED TO SATISFY THE EQUATION
-			System.out.println("We've entered IR2.");
+			// System.out.println("We've entered IR2.");
 			if (this.allUnknowns.get(0).getFactor() == 1) {
 				cellsThatChanged.add(this.allUnknowns.get(0).getCell());
-				System.out.println("IR2: We processed an association and found that " +
+				/* System.out.println("IR2: We processed an association and found that " +
 						this.allUnknowns.get(0).getCell().getPos().getX() + ", " + 
 						this.allUnknowns.get(0).getCell().getPos().getY() +
-						" was able to be confirmed as empty.");
+						" was able to be confirmed as empty."); */
 			} else {
 				cellsThatChanged.add(this.allUnknowns.get(1).getCell());
-				System.out.println("IR2: We processed an association and found that " +
+				/* System.out.println("IR2: We processed an association and found that " +
 						this.allUnknowns.get(1).getCell().getPos().getX() + ", " + 
 						this.allUnknowns.get(1).getCell().getPos().getY() +
-						" was able to be confirmed as empty.");
+						" was able to be confirmed as empty."); */
 			}
 			
 			return cellsThatChanged;
@@ -229,15 +230,21 @@ public class Association {
 		if (positiveSum == this.totalBlocks) {
 			// WE KNOW THE FACTORS OF ALL THE SAME SIGN (POSITIVE) MUST BE BLOCKED
 				// THAT WOULD BE THE ONLY WAY TO STATISFY THIS ASSOCIATION
-			System.out.println("We've entered IR3.");
+			// System.out.println("We've entered IR3.");
 			for (int i = 0; i < this.allUnknowns.size(); i++) {
 				CellInfo temp = this.allUnknowns.get(i).getCell();
 				if (this.allUnknowns.get(i).getFactor() > 0) {
 					temp.setBlocked();
 					cellsThatChanged.add(temp);
-					System.out.println("IR3: We processed an association and found that " +
+					/* System.out.println("IR3: We processed an association and found that " +
 							temp.getPos().getX() + ", " + temp.getPos().getY() +
-							" was able to be confirmed as blocked.");
+							" was able to be confirmed as blocked."); */
+				} else {
+					temp.setEmpty();
+					cellsThatChanged.add(temp);
+					/* System.out.println("IR3: We processed an association and found that " +
+							temp.getPos().getX() + ", " + temp.getPos().getY() +
+							" was able to be confirmed as empty."); */
 				}
 			}
 			
@@ -248,15 +255,21 @@ public class Association {
 		if ((sum - positiveSum < 0) && (sum - positiveSum == this.totalBlocks)) {
 			// WE KNOW THE FACTORS OF ALL THE SAME SIGN (NEGATIVE) MUST BE BLOCKED
 				// THAT WOULD BE THE ONLY WAY TO SATISFY THIS ASSOCIATION
-			System.out.println("We've entered IR4.");
+			// System.out.println("We've entered IR4.");
 			for (int i = 0; i < this.allUnknowns.size(); i++) {
 				CellInfo temp = this.allUnknowns.get(i).getCell();
 				if (this.allUnknowns.get(i).getFactor() < 0) {
 					temp.setBlocked();
 					cellsThatChanged.add(temp);
-					System.out.println("IR4: We processed an association and found that " +
+					/* System.out.println("IR4: We processed an association and found that " +
 							temp.getPos().getX() + ", " + temp.getPos().getY() +
-							" was able to be confirmed as blocked.");
+							" was able to be confirmed as blocked."); */
+				} else {
+					temp.setEmpty();
+					cellsThatChanged.add(temp);
+					/* System.out.println("IR4: We processed an association and found that " +
+							temp.getPos().getX() + ", " + temp.getPos().getY() +
+							" was able to be confirmed as empty."); */
 				}
 			}
 			
@@ -268,14 +281,14 @@ public class Association {
 			// WE KNOW THAT ALL OF THE CELLS MUST BE EMPTY
 				// ALL TERMS ARE OF THE SAME SIGN AND THE TOTAL BLOCKS BETWEEN THEM ARE STILL ZERO
 				// THE ONLY POSSIBLE CONCLUSION IS THAT ALL CELLS MUST BE ZERO (I.E. THEY'RE EMPTY AND NOT BLOCKED)
-			System.out.println("We've entered IR5.");
+			// System.out.println("We've entered IR5.");
 			for (int i = 0; i < this.allUnknowns.size(); i++) {
 				CellInfo temp = this.allUnknowns.get(i).getCell();
 				temp.setEmpty();
 				cellsThatChanged.add(temp);
-				System.out.println("IR5: We processed an association and found that " +
+				/* System.out.println("IR5: We processed an association and found that " +
 						temp.getPos().getX() + ", " + temp.getPos().getY() +
-						" was able to be confirmed as empty.");
+						" was able to be confirmed as empty."); */
 			}
 		}
 		

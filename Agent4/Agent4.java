@@ -347,13 +347,13 @@ public class Agent4 {
 						for (int j = 0; j < facts.size(); j++) { // WE NEED TO UPDATE OUR KNOWLEDGE BASE
 							removeFromAssociation(maze.getCell(neighbor_x, neighbor_y), j);
 						}
-						System.out.println("We've inferred " + neighbor_x + ", " + neighbor_y + " to be blocked.");
+						// System.out.println("We've inferred " + neighbor_x + ", " + neighbor_y + " to be blocked.");
 					} else if (restEmpty) {
 						maze.getCell(neighbor_x, neighbor_y).setEmpty();
 						for (int j = 0; j < facts.size(); j++) { // WE NEED TO UPDATE OUR KNOWLEDGE BASE
 							removeFromAssociation(maze.getCell(neighbor_x, neighbor_y), j);
 						}
-						System.out.println("We've inferred " + neighbor_x + ", " + neighbor_y + " to be empty.");
+						// System.out.println("We've inferred " + neighbor_x + ", " + neighbor_y + " to be empty.");
 					}
 					// NOW THAT THIS CELL'S STATUS HAS BEEN UPDATED, THEIR NEIGHBORS MIGHT BE INTERESTED IN UPDATING THEIR KNOWLEDGE AS WELL
 					// WE'RE NOT SENSING (DIFFERENT PHASE) AROUND THIS NEIGHBOR CELL BUT WE CAN POSSIBLY INFER SOMETHING AS WELL
@@ -400,11 +400,6 @@ public class Agent4 {
 					for (int j = 0; j < confirmed.size(); j++) {
 						for (int k = 0; k < facts.size(); k++) {
 							removeFromAssociation(confirmed.get(j), k);
-							ArrayList<CellInfo> remainingUnconfirmed = facts.get(k).getCells();
-							for (int l = 0; l < facts.size(); l++) {
-								System.out.println("We're going to recurse with inferExtended.");
-								inferExtended(remainingUnconfirmed.get(l));
-							}
 						}
 						infer(confirmed.get(j));
 					}
@@ -718,7 +713,7 @@ public class Agent4 {
 			CellInfo currCell = plannedPath.poll();
 			
 			// DEBUGGING STATEMENT
-			System.out.println("Agent is currently in " + currCell.getPos().getX() + ", " + currCell.getPos().getY());
+			// System.out.println("Agent is currently in " + currCell.getPos().getX() + ", " + currCell.getPos().getY());
 			
 			// HAVE WE HIT THE GOAL CELL YET?
 			if (currCell.getPos().getX() == mazeRunner.cols - 1 && currCell.getPos().getY() == mazeRunner.rows - 1) { // WE'VE HIT THE GOAL CELL
@@ -793,7 +788,7 @@ public class Agent4 {
 				plannedPath = mazeRunner.plan(currCell);
 				if (plannedPath == null) {
 					System.out.println("Maze is unsolvable.\n");
-					System.out.println(mazeRunner.maze.toString());
+					// System.out.println(mazeRunner.maze.toString());
 					return 'F';
 				}
 				badPath = false;
@@ -811,7 +806,7 @@ public class Agent4 {
 				mazeRunner.collisions++;
 				
 				// DEBUGGING STATEMENT
-				System.out.println("We've hit a block at coordinate " + obstruction.getPos().toString());
+				// System.out.println("We've hit a block at coordinate " + obstruction.getPos().toString());
 				
 				// WE NEED TO UPDATE OUR KNOWLEDGE BASE
 				Point n = new Point((int) obstruction.getPos().getX(), (int) obstruction.getPos().getY() - 1);
@@ -850,7 +845,7 @@ public class Agent4 {
 				plannedPath = mazeRunner.plan(currCell);
 				if (plannedPath == null) {
 					System.out.println("Maze is unsolvable.\n");
-					System.out.println(mazeRunner.maze.toString());
+					// System.out.println(mazeRunner.maze.toString());
 					return 'F';
 				}
 				continue;
@@ -915,7 +910,7 @@ public class Agent4 {
 		}
 
 		System.out.println("Path Found!");
-		System.out.println(mazeRunner.maze.toString());
+		// System.out.println(mazeRunner.maze.toString());
 		mazeRunner.printStats();
 
 		return 'S';
