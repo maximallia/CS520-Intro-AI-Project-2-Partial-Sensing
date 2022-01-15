@@ -31,3 +31,7 @@ The Example Agent follows the following workflow:
 – If the cell is blocked, the stored info for all cells is updated accordingly. The inference agent is run until nothing new can be inferred.
 • After the agent completes the inference: if a cell along the planned path is inferred to be blocked, or the cell the agent attempted to enter is blocked, A∗ is run again on the current state of the board with the agent’s current location to generate a new path plan.
 • Repeat.
+
+MORE INFO: Assignment 2.pdf
+
+FINAL REPORT: Daniel Ying (dty16) Zachary Tarman (zpt2) Pravin Kumaar (pr482) Project 2.pdf
